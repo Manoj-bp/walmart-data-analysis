@@ -1,0 +1,211 @@
+# Requirements & Setup
+
+## Tools Used
+
+* **Kaggle** – Used to download the dataset
+* **Anaconda / Jupyter Notebook** – Used for Python development, data cleaning, transformation, and analysis
+* **MySQL Server** – Used as the database to store the processed dataset
+* **Python** – Used for data processing and database connectivity
+
+## Required Python Libraries
+
+The following Python libraries were used:
+
+```bash
+pip install pandas pymysql sqlalchemy psycopg2
+```
+
+### Libraries and Their Purpose
+
+| Library      | Purpose                                                                |
+| ------------ | ---------------------------------------------------------------------- |
+| `pandas`     | Data loading, cleaning, transformation, and analysis                   |
+| `pymysql`    | Connecting Python/Jupyter to MySQL                                     |
+| `sqlalchemy` | Creating database connections and loading data into MySQL              |
+| `psycopg2`   | PostgreSQL database connectivity (only required if PostgreSQL is used) |
+
+> **Note:** Since this project uses **MySQL**, `psycopg2` is not required for the MySQL connection. You can remove it unless you plan to work with PostgreSQL.
+
+---
+
+# Kaggle Dataset Setup
+
+## 1. Download Dataset from Kaggle
+
+The dataset was obtained from Kaggle.
+
+1. Create/sign in to your Kaggle account.
+2. Open the required dataset.
+3. Download the dataset as a ZIP/CSV file.
+4. Extract the downloaded files to your project folder.
+
+For example:
+
+```text
+Project/
+│
+├── dataset/
+│   └── walmart.csv
+│
+└── notebook/
+    └── walmart_analysis.ipynb
+```
+
+---
+
+# Anaconda & Jupyter Notebook
+
+Anaconda was used to manage the Python environment and run Jupyter Notebook.
+
+Open **Anaconda Navigator** and launch:
+
+```text
+Jupyter Notebook
+```
+
+Alternatively, Jupyter Notebook can be started from Anaconda Prompt:
+
+```bash
+jupyter notebook
+```
+
+Create or open the notebook where the data processing will be performed.
+
+---
+
+# Import Required Libraries
+
+Inside the Jupyter Notebook:
+
+```python
+import pandas as pd
+import pymysql
+import sqlalchemy as sal
+```
+
+If PostgreSQL is not being used, `psycopg2` does not need to be imported.
+---
+
+# MySQL Server Setup
+
+MySQL Server was used as the target database for storing the processed dataset.
+
+Make sure:
+
+1. MySQL Server is installed.
+2. MySQL Server is running.
+3. A database has been created.
+
+
+# Connect Jupyter Notebook to MySQL
+
+SQLAlchemy and PyMySQL were used to establish the connection between Jupyter Notebook and MySQL.
+
+Example:
+
+```python
+import sqlalchemy as sal
+
+engine = sal.create_engine(
+    "mysql+pymysql://username:password@localhost:3306/walmart"
+)
+
+conn = engine.connect()
+```
+
+Replace:
+
+```text
+username
+password
+```
+
+with your MySQL credentials.
+
+---
+
+# Load Data into MySQL
+
+After cleaning the dataset in Pandas, the DataFrame can be loaded into MySQL using:
+
+```python
+df.to_sql(
+    "walmart",
+    con=conn,
+    index=False,
+    if_exists="append"
+)
+```
+
+### `to_sql()` Parameters
+
+* `"walmart"` → MySQL table name
+* `con=conn` → Database connection
+* `index=False` → Do not insert the Pandas index as a column
+* `if_exists="append"` → Add the data to an existing table
+
+# Project Workflow
+
+The overall workflow used in this project is:
+
+```text
+              Kaggle
+                 │
+                 │ Download Dataset
+                 ▼
+          CSV / Dataset
+                 │
+                 ▼
+       Jupyter Notebook
+          (Anaconda)
+                 │
+                 │ Pandas
+                 │
+        Data Cleaning
+        Data Transformation
+                 │
+                 ▼
+          SQLAlchemy
+                 │
+              PyMySQL
+                 │
+                 ▼
+          MySQL Server
+                 │
+                 ▼
+          Walmart Table
+```
+
+## Technology Stack
+
+```text
+Data Source      : Kaggle
+Development      : Anaconda + Jupyter Notebook
+Programming      : Python
+Data Processing  : Pandas
+Database         : MySQL
+DB Connector     : PyMySQL
+DB Interface     : SQLAlchemy
+```
+
+### Note on `psycopg2`
+
+`psycopg2` is a **PostgreSQL** driver. Since your project uses **MySQL**, the relevant connection stack is:
+
+```text
+Jupyter Notebook
+       ↓
+   SQLAlchemy
+       ↓
+    PyMySQL
+       ↓
+     MySQL
+```
+
+So your main required libraries are:
+
+```bash
+pip install pandas pymysql sqlalchemy
+```
+
+`psycopg2` can be omitted for this project.
